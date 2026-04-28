@@ -1,1 +1,4 @@
 project_id = "kkaeudybgypmhwscrpsk"
+
+[functions.esp]
+verify_jwt = false
