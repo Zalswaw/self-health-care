@@ -14,7 +14,90 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      esp_readings: {
+        Row: {
+          berat_badan: number | null
+          consumed: boolean
+          created_at: string
+          id: string
+          suhu_tubuh: number | null
+          tinggi_badan: number | null
+        }
+        Insert: {
+          berat_badan?: number | null
+          consumed?: boolean
+          created_at?: string
+          id?: string
+          suhu_tubuh?: number | null
+          tinggi_badan?: number | null
+        }
+        Update: {
+          berat_badan?: number | null
+          consumed?: boolean
+          created_at?: string
+          id?: string
+          suhu_tubuh?: number | null
+          tinggi_badan?: number | null
+        }
+        Relationships: []
+      }
+      patients: {
+        Row: {
+          alamat: string | null
+          alergi: string | null
+          berat_badan: number | null
+          created_at: string
+          id: string
+          jenis_kelamin: string | null
+          nama: string
+          patient_code: string
+          pekerjaan: string | null
+          queue_number: number
+          riwayat_penyakit: string | null
+          status: string
+          suhu_tubuh: number | null
+          tinggi_badan: number | null
+          umur: number | null
+          updated_at: string
+        }
+        Insert: {
+          alamat?: string | null
+          alergi?: string | null
+          berat_badan?: number | null
+          created_at?: string
+          id?: string
+          jenis_kelamin?: string | null
+          nama: string
+          patient_code: string
+          pekerjaan?: string | null
+          queue_number: number
+          riwayat_penyakit?: string | null
+          status?: string
+          suhu_tubuh?: number | null
+          tinggi_badan?: number | null
+          umur?: number | null
+          updated_at?: string
+        }
+        Update: {
+          alamat?: string | null
+          alergi?: string | null
+          berat_badan?: number | null
+          created_at?: string
+          id?: string
+          jenis_kelamin?: string | null
+          nama?: string
+          patient_code?: string
+          pekerjaan?: string | null
+          queue_number?: number
+          riwayat_penyakit?: string | null
+          status?: string
+          suhu_tubuh?: number | null
+          tinggi_badan?: number | null
+          umur?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
