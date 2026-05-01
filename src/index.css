@@ -92,10 +92,59 @@
 
 @layer utilities {
   .bg-gradient-hero { background: var(--gradient-hero); }
+  .text-gradient-hero {
+    background: var(--gradient-hero);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
   .bg-gradient-soft { background: var(--gradient-soft); }
   .bg-gradient-card { background: var(--gradient-card); }
   .shadow-soft { box-shadow: var(--shadow-soft); }
   .shadow-card { box-shadow: var(--shadow-card); }
   .shadow-glow { box-shadow: var(--shadow-glow); }
   .transition-smooth { transition: var(--transition-smooth); }
+}
+
+@media print {
+  @page {
+    size: 58mm auto;
+    margin: 0;
+  }
+
+  /* Hide everything except the thermal receipt */
+  body > * {
+    display: none !important;
+  }
+
+  /* Show only the print receipt */
+  #print-receipt {
+    display: block !important;
+    width: 58mm !important;
+    margin: 0 !important;
+    padding: 2mm 3mm !important;
+    background: white !important;
+    color: black !important;
+    font-family: monospace !important;
+  }
+
+  html, body {
+    width: 58mm;
+    margin: 0;
+    padding: 0;
+    background: white !important;
+    color: black !important;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    color: black !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  #print-receipt * {
+    background: white !important;
+  }
 }

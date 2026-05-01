@@ -18,6 +18,7 @@ const schema = z.object({
   pekerjaan: z.string().trim().max(100).optional(),
   umur: z.coerce.number().int().min(0).max(150).optional(),
   jenis_kelamin: z.string().optional(),
+  keluhan: z.string().trim().max(500).optional(),
   riwayat_penyakit: z.string().trim().max(500).optional(),
   alergi: z.string().trim().max(300).optional(),
   tinggi_badan: z.coerce.number().min(0).max(300).optional(),
@@ -34,7 +35,7 @@ interface Result {
 export default function Daftar() {
   const [form, setForm] = useState<Record<string, string>>({
     nama: "", alamat: "", pekerjaan: "", umur: "", jenis_kelamin: "",
-    riwayat_penyakit: "", alergi: "", tinggi_badan: "", berat_badan: "", suhu_tubuh: "",
+    keluhan: "", riwayat_penyakit: "", alergi: "", tinggi_badan: "", berat_badan: "", suhu_tubuh: "",
   });
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
@@ -100,7 +101,7 @@ export default function Daftar() {
       const queue_number = next;
 
       const payload: any = { patient_code, queue_number, nama: parsed.data.nama };
-      for (const k of ["alamat","pekerjaan","umur","jenis_kelamin","riwayat_penyakit","alergi","tinggi_badan","berat_badan","suhu_tubuh"] as const) {
+      for (const k of ["alamat","pekerjaan","umur","jenis_kelamin","keluhan","riwayat_penyakit","alergi","tinggi_badan","berat_badan","suhu_tubuh"] as const) {
         const v = (parsed.data as any)[k];
         if (v !== undefined && v !== "" && !Number.isNaN(v)) payload[k] = v;
       }
@@ -137,37 +138,83 @@ export default function Daftar() {
   if (result) {
     return (
       <div className="min-h-screen bg-gradient-soft">
-        <Header />
-        <main className="container py-10 max-w-2xl">
-          <Card className="p-8 bg-gradient-card shadow-card text-center space-y-6">
-            <div className="mx-auto h-14 w-14 rounded-full bg-accent flex items-center justify-center">
-              <CheckCircle2 className="h-7 w-7 text-primary" />
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold">Pendaftaran Berhasil</h2>
-              <p className="text-muted-foreground">Selamat datang, {result.nama}</p>
-            </div>
-            <div className="grid grid-cols-2 gap-4 max-w-sm mx-auto">
-              <div className="p-4 rounded-xl bg-secondary">
-                <div className="text-xs text-muted-foreground">Nomor Antrian</div>
-                <div className="text-3xl font-bold text-primary">{result.queue_number}</div>
+        <div>
+          <Header />
+          <main className="container py-10 max-w-2xl">
+            <Card className="p-8 bg-gradient-card shadow-card text-center space-y-6">
+              <div className="mx-auto h-14 w-14 rounded-full bg-accent flex items-center justify-center">
+                <CheckCircle2 className="h-7 w-7 text-primary" />
               </div>
-              <div className="p-4 rounded-xl bg-secondary">
-                <div className="text-xs text-muted-foreground">Kode Pasien</div>
-                <div className="text-sm font-mono font-semibold mt-1">{result.patient_code}</div>
+              <div>
+                <h2 className="text-2xl font-bold">Pendaftaran Berhasil</h2>
+                <p className="text-muted-foreground">Selamat datang, {result.nama}</p>
               </div>
-            </div>
-            <div id="patient-barcode" className="bg-white rounded-xl p-4 inline-block shadow-soft">
-              <Barcode value={result.patient_code} />
-            </div>
-            <p className="text-sm text-muted-foreground">Tunjukkan barcode ini ke dokter saat dipanggil.</p>
-            <div className="flex flex-wrap justify-center gap-2">
-              <Button onClick={downloadBarcode} variant="outline"><Download className="h-4 w-4 mr-2" />Download</Button>
-              <Button onClick={printBarcode} variant="outline"><Printer className="h-4 w-4 mr-2" />Print</Button>
-              <Button onClick={() => { setResult(null); setForm({ nama:"",alamat:"",pekerjaan:"",umur:"",jenis_kelamin:"",riwayat_penyakit:"",alergi:"",tinggi_badan:"",berat_badan:"",suhu_tubuh:"" }); }} className="bg-gradient-hero">Pasien Baru</Button>
-            </div>
-          </Card>
-        </main>
+              <div className="grid grid-cols-2 gap-4 max-w-sm mx-auto">
+                <div className="p-4 rounded-xl bg-secondary">
+                  <div className="text-xs text-muted-foreground">Nomor Antrian</div>
+                  <div className="text-3xl font-bold text-primary">{result.queue_number}</div>
+                </div>
+                <div className="p-4 rounded-xl bg-secondary">
+                  <div className="text-xs text-muted-foreground">Kode Pasien</div>
+                  <div className="text-sm font-mono font-semibold mt-1">{result.patient_code}</div>
+                </div>
+              </div>
+              <div id="patient-barcode" className="bg-white rounded-xl p-4 inline-block shadow-soft">
+                <Barcode value={result.patient_code} />
+              </div>
+              <p className="text-sm text-muted-foreground">Tunjukkan barcode ini ke dokter saat dipanggil.</p>
+              <div className="flex flex-wrap justify-center gap-2">
+                <Button onClick={downloadBarcode} variant="outline"><Download className="h-4 w-4 mr-2" />Download</Button>
+                <Button onClick={printBarcode} variant="outline"><Printer className="h-4 w-4 mr-2" />Print</Button>
+                <Button onClick={() => { setResult(null); setForm({ nama:"",alamat:"",pekerjaan:"",umur:"",jenis_kelamin:"",keluhan:"",riwayat_penyakit:"",alergi:"",tinggi_badan:"",berat_badan:"",suhu_tubuh:"" }); }} className="bg-gradient-hero">Pasien Baru</Button>
+              </div>
+            </Card>
+          </main>
+        </div>
+
+        {/* 58mm Thermal Print Layout — only visible when printing */}
+        <div id="print-receipt" className="hidden print:block" style={{ width: '58mm', margin: '0 auto', padding: '2mm 3mm', fontFamily: 'monospace', color: '#000', background: '#fff', fontSize: '10px' }}>
+          {/* Header */}
+          <div style={{ textAlign: 'center', marginBottom: '3mm' }}>
+            <div style={{ fontWeight: 900, fontSize: '13px', letterSpacing: '1px', textTransform: 'uppercase' }}>SELF HEALTY CARE</div>
+            <div style={{ fontSize: '9px', color: '#333', marginTop: '1mm' }}>Pendaftaran Pasien</div>
+          </div>
+
+          <div style={{ borderTop: '1px dashed #000', margin: '2mm 0' }} />
+
+          {/* Queue Number */}
+          <div style={{ textAlign: 'center', margin: '2mm 0' }}>
+            <div style={{ fontSize: '8px', letterSpacing: '2px', textTransform: 'uppercase', color: '#444' }}>NOMOR ANTRIAN</div>
+            <div style={{ fontSize: '36px', fontWeight: 900, lineHeight: 1.1, color: '#000' }}>{result.queue_number}</div>
+          </div>
+
+          <div style={{ borderTop: '1px dashed #000', margin: '2mm 0' }} />
+
+          {/* Patient Info */}
+          <div style={{ textAlign: 'center', margin: '2mm 0' }}>
+            <div style={{ fontSize: '8px', letterSpacing: '2px', textTransform: 'uppercase', color: '#444' }}>KODE PASIEN</div>
+            <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.5px', marginTop: '1mm' }}>{result.patient_code}</div>
+            <div style={{ fontSize: '10px', fontWeight: 600, marginTop: '1.5mm' }}>{result.nama}</div>
+          </div>
+
+          <div style={{ borderTop: '1px dashed #000', margin: '2mm 0' }} />
+
+          {/* Barcode */}
+          <div style={{ display: 'flex', justifyContent: 'center', margin: '2mm 0', overflow: 'hidden' }}>
+            <Barcode value={result.patient_code} />
+          </div>
+
+          <div style={{ borderTop: '1px dashed #000', margin: '2mm 0' }} />
+
+          {/* Footer */}
+          <div style={{ fontSize: '8px', textAlign: 'left', lineHeight: 1.5, color: '#333' }}>
+            Tunjukkan struk ini ke dokter saat dipanggil.
+          </div>
+          <div style={{ fontSize: '8px', color: '#333', marginTop: '1mm' }}>
+            {new Date().toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' })}
+          </div>
+          <div style={{ textAlign: 'center', marginTop: '3mm', fontSize: '9px', fontStyle: 'italic', letterSpacing: '1px' }}>--- SEHAT SELALU ---</div>
+        </div>
       </div>
     );
   }
@@ -210,6 +257,9 @@ export default function Daftar() {
               </Field>
               <Field label="Alergi" full>
                 <Textarea value={form.alergi} onChange={handleChange("alergi")} maxLength={300} rows={2} placeholder="Antibiotik, makanan laut, dll." />
+              </Field>
+              <Field label="Keluhan Sakit ✱" full>
+                <Textarea value={form.keluhan} onChange={handleChange("keluhan")} maxLength={500} rows={3} placeholder="Contoh: demam 3 hari, sakit kepala, batuk berdahak..." className="border-primary/40 focus:border-primary" />
               </Field>
             </div>
 

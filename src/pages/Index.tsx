@@ -22,10 +22,10 @@ const Index = () => {
         <section className="container py-16 md:py-24">
           <div className="max-w-3xl mx-auto text-center space-y-6">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent text-accent-foreground text-sm font-medium">
-              <HeartPulse className="h-4 w-4" /> Self Health Care System
+              <HeartPulse className="h-4 w-4" /> Self Healty Care
             </div>
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground">
-              Pendaftaran pasien <span className="bg-gradient-hero bg-clip-text text-transparent">tanpa antri panjang</span>
+              Pendaftaran pasien <span className="text-gradient-hero">tanpa antri panjang</span>
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Pasien daftar mandiri, sensor IoT ukur otomatis, dokter cukup scan barcode — semua data muncul instan.

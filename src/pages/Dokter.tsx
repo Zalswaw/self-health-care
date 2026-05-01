@@ -11,7 +11,7 @@ import { Camera, ScanLine, X, User, MapPin, Briefcase, Calendar, HeartPulse, Ale
 
 interface Patient {
   patient_code: string; queue_number: number; nama: string; alamat: string|null; pekerjaan: string|null;
-  umur: number|null; jenis_kelamin: string|null; riwayat_penyakit: string|null; alergi: string|null;
+  umur: number|null; jenis_kelamin: string|null; keluhan: string|null; riwayat_penyakit: string|null; alergi: string|null;
   tinggi_badan: number|null; berat_badan: number|null; suhu_tubuh: number|null; status: string;
 }
 
@@ -129,6 +129,12 @@ export default function Dokter() {
                 </div>
 
                 <div className="space-y-2">
+                  {patient.keluhan && (
+                    <div className="p-3 rounded-lg border-2 border-primary/30 bg-primary/5">
+                      <div className="flex items-center gap-1.5 text-xs font-semibold text-primary mb-1">✱ Keluhan Sakit</div>
+                      <div className="text-sm font-medium">{patient.keluhan}</div>
+                    </div>
+                  )}
                   <Detail icon={HeartPulse} label="Riwayat Penyakit" value={patient.riwayat_penyakit} />
                   <Detail icon={AlertTriangle} label="Alergi" value={patient.alergi} />
                 </div>

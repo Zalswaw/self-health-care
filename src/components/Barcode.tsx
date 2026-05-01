@@ -4,23 +4,24 @@ import JsBarcode from "jsbarcode";
 interface Props {
   value: string;
   className?: string;
+  printMode?: boolean; // true = optimized for print/scan
 }
 
-export default function Barcode({ value, className }: Props) {
+export default function Barcode({ value, className, printMode = false }: Props) {
   const ref = useRef<SVGSVGElement>(null);
   useEffect(() => {
     if (ref.current && value) {
       JsBarcode(ref.current, value, {
         format: "CODE128",
-        width: 2.5,
-        height: 90,
+        width: printMode ? 1.5 : 2,
+        height: printMode ? 60 : 80,
         displayValue: true,
-        fontSize: 16,
-        margin: 12,
+        fontSize: printMode ? 12 : 14,
+        margin: printMode ? 4 : 10,
         background: "#ffffff",
-        lineColor: "#0f3a2e",
+        lineColor: "#000000", // hitam pekat agar bisa discan
       });
     }
-  }, [value]);
+  }, [value, printMode]);
   return <svg ref={ref} className={className} />;
 }

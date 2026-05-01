@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Activity, ScanLine, LayoutDashboard, UserPlus } from "lucide-react";
+import { ScanLine, LayoutDashboard, UserPlus, Activity } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const links = [
@@ -15,10 +15,10 @@ export default function Header() {
     <header className="sticky top-0 z-40 backdrop-blur-lg bg-background/80 border-b border-border">
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-2 font-semibold text-lg">
-          <div className="h-9 w-9 rounded-xl bg-gradient-hero flex items-center justify-center shadow-soft">
-            <Activity className="h-5 w-5 text-primary-foreground" />
+          <div className="h-9 w-9 rounded-xl overflow-hidden shadow-soft">
+            <img src="/img/logotitle.png" alt="Logo" className="h-full w-full object-cover" />
           </div>
-          <span>MintCare</span>
+          <span>Self Healty Care</span>
         </Link>
         <nav className="flex items-center gap-1">
           {links.map((l) => {
