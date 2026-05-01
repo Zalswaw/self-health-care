@@ -97,7 +97,7 @@ export default function Daftar() {
       // generate code & queue via simple count
       const { count } = await supabase.from("patients").select("*", { count: "exact", head: true });
       const next = (count ?? 0) + 1;
-      const patient_code = `PASIEN-${String(next).padStart(6, "0")}`;
+      const patient_code = `PASIEN-${String(next).padStart(3, "0")}`;
       const queue_number = next;
 
       const payload: any = { patient_code, queue_number, nama: parsed.data.nama };

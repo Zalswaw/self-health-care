@@ -86,9 +86,18 @@ export default function Dashboard() {
     return () => { supabase.removeChannel(ch); };
   }, []);
 
-  const updateStatus = async (id: string, status: string) => {
-    const { error } = await supabase.from("patients").update({ status }).eq("id", id);
-    if (error) toast.error("Gagal");
+  const updateStatus = async (p: P, status: string) => {
+    const { error } = await supabase.from("patients").update({ status }).eq("id", p.id);
+    if (error) { toast.error("Gagal"); return; }
+    
+    if (status === "dipanggil" && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const textToSpeak = `${p.patient_code.replace("-", " ")}, segera menemui dokter`;
+      const msg = new SpeechSynthesisUtterance(textToSpeak);
+      msg.lang = 'id-ID';
+      msg.rate = 0.9;
+      window.speechSynthesis.speak(msg);
+    }
   };
 
   const counts = {
@@ -142,8 +151,8 @@ export default function Dashboard() {
                       <td className="px-4 py-3"><Badge variant="outline" className={s.cls}>{s.label}</Badge></td>
                       <td className="px-4 py-3 text-right">
                         <div className="inline-flex gap-1">
-                          {p.status !== "dipanggil" && <Button size="sm" variant="ghost" onClick={() => updateStatus(p.id, "dipanggil")}>Panggil</Button>}
-                          {p.status !== "selesai"   && <Button size="sm" variant="ghost" onClick={() => updateStatus(p.id, "selesai")}>Selesai</Button>}
+                          {p.status !== "dipanggil" && <Button size="sm" variant="ghost" onClick={() => updateStatus(p, "dipanggil")}>Panggil</Button>}
+                          {p.status !== "selesai"   && <Button size="sm" variant="ghost" onClick={() => updateStatus(p, "selesai")}>Selesai</Button>}
                           <Button size="sm" variant="outline" className="text-primary border-primary/30 hover:bg-primary/10" onClick={() => setPrintTarget(p)}>
                             <Printer className="h-3.5 w-3.5 mr-1" />Cetak
                           </Button>

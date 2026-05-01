@@ -64,6 +64,15 @@ export default function Dokter() {
     if (error) { toast.error("Gagal update status"); return; }
     setPatient({ ...patient, status });
     toast.success(`Status: ${status}`);
+
+    if (status === "dipanggil" && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const textToSpeak = `${patient.patient_code.replace("-", " ")}, segera menemui dokter`;
+      const msg = new SpeechSynthesisUtterance(textToSpeak);
+      msg.lang = 'id-ID';
+      msg.rate = 0.9;
+      window.speechSynthesis.speak(msg);
+    }
   };
 
   return (
